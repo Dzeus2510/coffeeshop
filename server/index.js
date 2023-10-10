@@ -9,9 +9,9 @@ app.use(cors())
 
 const db = require('./models')
 
-//Routers
-// const shopRouter = require("./routes/Shops");
-// app.use("/shops", shopRouter);
+// Routers
+const shopRouter = require("./routes/Shops");
+app.use("/shops", shopRouter);
 // const reviewRouter = require("./routes/Reviews");
 // app.use("/reviews", reviewRouter);
 // const userRouter = require("./routes/Users");
