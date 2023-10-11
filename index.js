@@ -10,6 +10,8 @@ var con = mysql.createConnection({
   database: "coffeeshop"
 });
 
+var place = "+ha+dong"
+
 con.connect((err) => {
   if (err) {
     console.error('Error connecting to database:', err);
@@ -23,7 +25,7 @@ con.connect((err) => {
   const page = await browser.newPage();
   try {
     await page.goto(
-      `https://www.google.com/maps/search/coffee+shop/@21.0286704,105.7702714,14z/data=!3m1!4b1?entry=ttu`
+      `https://www.google.com/maps/search/coffee+shop`+ place
     );
   } catch (error) {
     console.log("error going to page");
