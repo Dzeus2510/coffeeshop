@@ -29,7 +29,7 @@ function Cafe() {
                 "http://localhost:3001/reviews",
                 {
                     reviewBody: newReview,
-                    CafeId: cafeObject.id,
+                    coffeeplaceId: cafeObject.id,
                 },
                 {
                     headers: {
@@ -90,7 +90,7 @@ function Cafe() {
                         return (
                             <div key={key} className="review">
                                 {review.reviewBody}
-                                <label> Name: {review.username}</label>
+                                <label onClick={() => {nav(`/profile/${authState.id}`)}} style={{color:"red"}}>= {review.username}</label>
                                 {authState.username === review.username && (
                                     <button
                                         onClick={() => {

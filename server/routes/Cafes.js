@@ -4,8 +4,10 @@ const { coffeeplaces, Favourite } = require("../models")
 
 router.get("/", async (req, res) => {
     const listOfCafe = await coffeeplaces.findAll({include: [Favourite] })
-    const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id } })
-    res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
+    // console.log(req.user)
+    // const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
+    // res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
+    res.json({listOfCafe: listOfCafe})
 });
 
 router.get('/byId/:id', async (req, res) => {

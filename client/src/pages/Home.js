@@ -18,9 +18,9 @@ function Home() {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
-                setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
-                    return favourite.CafeId;
-                }));
+                // setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
+                //     return favourite.CafeId;
+                // }));
             });
         }
     }, []);
@@ -66,10 +66,14 @@ function Home() {
                 return (
                     <div className="post"  >
                         <div className="title">{value.name}</div>
-                        <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>{value.address}</div>
+                        <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
+                            {value.address}<br></br>
+                            {value.phone}
+                        </div>
                         <div className="footer">
-                            <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
-                            <label>{value.Favourites.length}</label>
+                            <div onClick={() => {window.location.href = value.website;}}>Website</div>
+                            {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
+                            <label>{value.Favourites.length}</label> */}
                         </div>
                     </div>
                 );
