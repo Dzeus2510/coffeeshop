@@ -3,9 +3,9 @@ const router = express.Router();
 const { Review } = require("../models");
 const { validateToken} = require('../middleware/AuthMiddleware')
 
-router.get('/:shopId', async (req,res) => {
-    const shopId = req.params.shopId
-    const reviews = await Review.findAll({where: {shopId: shopId}})
+router.get('/:cafeId', async (req,res) => {
+    const cafeId = req.params.cafeId
+    const reviews = await Review.findAll({where: {cafeId: cafeId}})
     res.json(reviews)
 })
 //get postId from frontend param, then find all comments that have the same postId to show 

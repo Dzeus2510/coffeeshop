@@ -10,8 +10,8 @@ app.use(cors())
 const db = require('./models')
 
 // Routers
-const shopRouter = require("./routes/Cafes");
-app.use("/cafes", shopRouter);
+const cafeRouter = require("./routes/Cafes");
+app.use("/cafes", cafeRouter);
 const reviewRouter = require("./routes/Reviews");
 app.use("/reviews", reviewRouter);
 const userRouter = require("./routes/Users");

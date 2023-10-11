@@ -11,7 +11,10 @@ function Home() {
     let navigate = useNavigate()
 
     useEffect(() => {
-            axios.get("http://localhost:3001/shops", {
+        if (!localStorage.getItem("accessToken")) {
+            navigate("/login")
+        } else {
+            axios.get("http://localhost:3001/cafes", {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
@@ -19,8 +22,10 @@ function Home() {
                     return favourite.CafeId;
                 }));
             });
+        }
     }, []);
-    //find all favourited cafe to highlight the favourite button, thus make it easier to detect which cafe user has favourited
+    //if user not logged in, redirect to /login
+    //else, set accesstoken in headers, and find all favourited cafe to highlight the favourite button, thus make it easier to detect which cafe user has favourited
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
