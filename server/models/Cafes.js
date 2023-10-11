@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const Shops = sequelize.define("coffeeplaces", {
+    const Cafes = sequelize.define("coffeeplaces", {
         name: {
             type: DataTypes.STRING,
         },
@@ -25,14 +25,14 @@ module.exports = (sequelize, DataTypes) => {
         },
     })
 
-    Shops.associate = (models) => {
-        Shops.hasMany(models.Review, {
+    Cafes.associate = (models) => {
+        Cafes.hasMany(models.Review, {
             onDelete: "cascade",
         });
     
-        Shops.hasMany(models.Favourite, {
+        Cafes.hasMany(models.Favourite, {
             onDelete: "cascade",
         });
     }
-    return Shops
+    return Cafes
 }
