@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
         review: {
             type: DataTypes.STRING,
         },
+        image: {
+            type: DataTypes.STRING,
+        },
     })
 
     Cafes.associate = (models) => {
