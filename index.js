@@ -36,7 +36,6 @@ con.connect((err) => {
     await clickAndGoBack(page);
   }
     const pages = await browser.pages();
-    console.log(pages)
     await Promise.all(pages.map((page) => page.close()));
     await browser.close();
   
@@ -109,7 +108,6 @@ async function clickAndGoBack(page) {
 
   for (let i = 0; i < urls.length; i++) {
     await page.goto(urls[i]);
-    console.log(page)
     await getData(page);
     // await new Promise((resolve) => setTimeout(resolve, 1000));
   };
@@ -145,6 +143,7 @@ async function getData(page) {
     const cat = parent.find('button[class="DkEaL "]').text();
     const stars = parent.find('span.ceNzKf').attr("aria-label") ? parseFloat(parent.find('span.ceNzKf').attr("aria-label")) : "No Stars";
     const reviews = parent.find('button[class="HHrUdb fontTitleSmall rqjGif"] > span').text() ? parseInt(parent.find('button[class="HHrUdb fontTitleSmall rqjGif"] > span').text()) : "No Review"
+    const img = parent.find('button[class="aoRNLd kn2E5e NMjTrf lvtCsd "] > img').attr("src") ? parent.find('button[class="aoRNLd kn2E5e NMjTrf lvtCsd "] > img').attr("src") : "No Img xD"
 
     coffeeshop.push({
       address: address,
@@ -156,20 +155,21 @@ async function getData(page) {
       // ratingText,
       stars: stars,
       numberOfReviews: reviews,
+      image: img,
     });
 
     con.query("SELECT COUNT(*) FROM coffeeshop.coffeeplaces WHERE address = ?", [address], function (error, result) {
       //Display the records one by one
       const count = result[0]['COUNT(*)'];
       if (count == 0) {
-        var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, dformat], function (err, result) {
+        var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review, createdAt, updatedAt, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, dformat, img], function (err, result) {
           if (err) throw err;
           console.log("NEW record inserted");
         });
       } else {
-        var sql = "UPDATE coffeeplaces SET name = ?, address = ?, cat = ?, phone = ?, website = ?, stars = ?, review = ?, updatedAt = ? WHERE address = ?";
-        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, address], function (err, result) {
+        var sql = "UPDATE coffeeplaces SET name = ?, address = ?, cat = ?, phone = ?, website = ?, stars = ?, review = ?, updatedAt = ?, image = ? WHERE address = ?";
+        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, img, address], function (err, result) {
           if (err) throw err;
           console.log("OLD record updated");
         });
