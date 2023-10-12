@@ -20,7 +20,7 @@ con.connect((err) => {
 });
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   for (let i = 0; i < places.length; i++) {
     var modifyplace = (places[i]).replace(/ /g, "+")
@@ -56,7 +56,7 @@ async function autoScroll(page) {
     await new Promise((resolve, reject) => {
       var totalHeight = 0;
       var distance = 1000;
-      var scrollDelay = 3000;
+      var scrollDelay = 4000;
       var timer = setInterval(async () => {
         var scrollHeightBefore = wrapper.scrollHeight;
         wrapper.scrollBy(0, distance);
@@ -80,6 +80,14 @@ async function autoScroll(page) {
     });
   });
 }
+
+var d = new Date
+const dformat = [d.getFullYear(),
+               d.getMonth()+1,
+               d.getDate()].join('-')+' '+
+              [d.getHours(),
+               d.getMinutes(),
+               d.getSeconds()].join(':');
 
 async function clickAndGoBack(page) {
   // Click on every search result div with the same class name
@@ -154,27 +162,19 @@ async function getData(page) {
       //Display the records one by one
       const count = result[0]['COUNT(*)'];
       if (count == 0) {
-        var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews], function (err, result) {
+        var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, dformat], function (err, result) {
           if (err) throw err;
           console.log("NEW record inserted");
         });
       } else {
-        var sql = "UPDATE coffeeplaces SET name = ?, address = ?, cat = ?, phone = ?, website = ?, stars = ?, review = ? WHERE address = ?";
-        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, address], function (err, result) {
+        var sql = "UPDATE coffeeplaces SET name = ?, address = ?, cat = ?, phone = ?, website = ?, stars = ?, review = ?, updatedAt = ? WHERE address = ?";
+        con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, address], function (err, result) {
           if (err) throw err;
           console.log("OLD record updated");
         });
       }
     });
-
-
-    //   var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    //     con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews], function (err, result) {
-    //       if (err) throw err;
-    //       console.log("record inserted");
-    //     });
-    // });
 
     // console.log(coffeeshop)
     return coffeeshop;
