@@ -69,11 +69,13 @@ function Home() {
                         <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
                             {value.address}<br></br>
                             {value.phone}
+                        <img src={value.image} alt={value.name} width={100} height={100}></img>
                         </div>
                         <div className="footer">
                             <div onClick={() => {window.location.href = value.website;}}>Website</div>
                             {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
                             <label>{value.Favourites.length}</label> */}
+                            
                         </div>
                     </div>
                 );
