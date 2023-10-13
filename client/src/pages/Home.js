@@ -18,7 +18,6 @@ function Home() {
             const urlParams = new URLSearchParams(window.location.search);
             const pageParam = urlParams.get("page");
             setPage(pageParam ? parseInt(pageParam) : 1);
-
             axios.get(`http://localhost:3001/cafes/?page=${page}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
@@ -38,6 +37,12 @@ function Home() {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
+
+    const searchCafe = (event => {
+        axios.get(`http://localhost:3001/cafes/${event.target.value}`).then((response) => {
+            setListOfCafe(response.data.listOfSearchedCafe);
+        });
+    })
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
@@ -77,6 +82,7 @@ function Home() {
             <div>PAGE {page}</div>
             <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button onClick={() => handlePageChange(page + 1)}>Next</button>
+            <input type="text" name="searchword" onChange={searchCafe}></input>
             {listOfCafe.map((value, key) => {
                 return (
                     <div className="post"  >
@@ -84,7 +90,7 @@ function Home() {
                         <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
                             {value.address}<br></br>
                             {value.phone}
-                            <img src={value.image} alt={value.name} width={100} height={100}></img>
+                            <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={120} height={120}></img>
                         </div>
                         <div className="footer">
                             <div onClick={() => { window.location.href = value.website; }}>Website</div>
