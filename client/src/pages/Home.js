@@ -5,6 +5,7 @@ import { AuthContext } from "../helpers/AuthContext";
 
 
 function Home() {
+    const [page, setPage] = useState(1);
     const [listOfCafe, setListOfCafe] = useState([]);
     const [favouriteCafes, setFavouriteCafes] = useState([]);
     const { authState } = useContext(AuthContext);
@@ -14,7 +15,11 @@ function Home() {
         if (!localStorage.getItem("accessToken")) {
             navigate("/login")
         } else {
-            axios.get("http://localhost:3001/cafes", {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageParam = urlParams.get("page");
+            setPage(pageParam ? parseInt(pageParam) : 1);
+
+            axios.get(`http://localhost:3001/cafes/?page=${page}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
@@ -23,9 +28,16 @@ function Home() {
                 // }));
             });
         }
-    }, []);
+    }, [page]);
     //if user not logged in, redirect to /login
     //else, set accesstoken in headers, and find all favourited cafe to highlight the favourite button, thus make it easier to detect which cafe user has favourited
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+        navigate(`/?page=${newPage}`, {
+            headers: { accessToken: localStorage.getItem("accessToken") }
+        })
+    };
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
@@ -62,6 +74,9 @@ function Home() {
 
     return (
         <div>
+            <div>PAGE {page}</div>
+            <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
+            <button onClick={() => handlePageChange(page + 1)}>Next</button>
             {listOfCafe.map((value, key) => {
                 return (
                     <div className="post"  >
@@ -69,17 +84,19 @@ function Home() {
                         <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
                             {value.address}<br></br>
                             {value.phone}
-                        <img src={value.image} alt={value.name} width={100} height={100}></img>
+                            <img src={value.image} alt={value.name} width={100} height={100}></img>
                         </div>
                         <div className="footer">
-                            <div onClick={() => {window.location.href = value.website;}}>Website</div>
+                            <div onClick={() => { window.location.href = value.website; }}>Website</div>
                             {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
                             <label>{value.Favourites.length}</label> */}
-                            
                         </div>
                     </div>
                 );
             })}
+            <div>PAGE {page}</div>
+            <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
+            <button onClick={() => handlePageChange(page + 1)}>Next</button>
         </div>
     );
 }
