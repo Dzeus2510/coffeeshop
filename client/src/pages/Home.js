@@ -100,7 +100,13 @@ function Home() {
                             <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={120} height={120}></img>
                         </div>
                         <div className="footer">
-                            <div onClick={() => { window.location.href = value.website; }}>Website</div>
+                            <div onClick={() => {
+                                if(value.website === 'No Website') {
+                                    window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+                                } else {
+                                    window.location.href = value.website;
+                                }
+                                }}>{(value.website === 'No Website') ? "No Website xD" : "WEBSITE"}</div>
                             {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
                             <label>{value.Favourites.length}</label> */}
                         </div>
