@@ -6,6 +6,8 @@ import { AuthContext } from "../helpers/AuthContext";
 
 function Home() {
     const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
+    const [searchword, setSearchword] = useState('');
     const [listOfCafe, setListOfCafe] = useState([]);
     const [favouriteCafes, setFavouriteCafes] = useState([]);
     const { authState } = useContext(AuthContext);
@@ -17,32 +19,37 @@ function Home() {
         } else {
             const urlParams = new URLSearchParams(window.location.search);
             const pageParam = urlParams.get("page");
+            const searchParam = urlParams.get("searchword")
             setPage(pageParam ? parseInt(pageParam) : 1);
-            axios.get(`http://localhost:3001/cafes/?page=${page}`, {
+            setSearchword(searchParam ? searchParam : "")
+            axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
+                setMaxPage(response.data.maxPage);
                 // setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
                 //     return favourite.CafeId;
                 // }));
             });
         }
-    }, [page]);
+    }, [page, searchword]);
     //if user not logged in, redirect to /login
     //else, set accesstoken in headers, and find all favourited cafe to highlight the favourite button, thus make it easier to detect which cafe user has favourited
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
-        navigate(`/?page=${newPage}`, {
+        navigate(`/?page=${newPage}&&searchword=${searchword}`, {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
 
-    const searchCafe = (event => {
-        axios.get(`http://localhost:3001/cafes/${event.target.value}`).then((response) => {
-            setListOfCafe(response.data.listOfSearchedCafe);
+    const searchCafe = (event) => {
+        setPage(1);
+        setSearchword(event.target.value);
+        navigate(`/?page=1&&searchword=${event.target.value}`, {
+            headers: { accessToken: localStorage.getItem("accessToken") }
         });
-    })
+    }
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
@@ -61,7 +68,6 @@ function Home() {
                     return cafe;
                 }
             }))
-            //
             if (favouriteCafes.includes(cafeId)) {
                 setFavouriteCafes(
                     favouriteCafes.filter((id) => {
@@ -73,16 +79,17 @@ function Home() {
             }
         })
     }
-    //
-
 
 
     return (
         <div>
-            <div>PAGE {page}</div>
+            <div>PAGE {page} / {maxPage}</div>
             <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button onClick={() => handlePageChange(page + 1)}>Next</button>
-            <input type="text" name="searchword" onChange={searchCafe}></input>
+            <button style={{display: page >= maxPage ? 'none' : ''}} onClick={() => handlePageChange(page + 1)}>Next</button>
+            <form>
+            <input type="text" name="searchword" onSubmit={searchCafe}></input>
+            <button type="submit">Search</button>
+            </form>
             {listOfCafe.map((value, key) => {
                 return (
                     <div className="post"  >
