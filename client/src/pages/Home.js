@@ -27,9 +27,9 @@ function Home() {
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
                 setMaxPage(response.data.maxPage);
-                // setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
-                //     return favourite.CafeId;
-                // }));
+                setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
+                    return favourite.coffeeplaceId;
+                }));
             });
         }
     }, [page, searchword]);
@@ -103,15 +103,16 @@ function Home() {
                             <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
                                 {(value.website === 'No Website') ? "No Website xD" : "Website"}
                             </a>
-                            {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
-                            <label>{value.Favourites.length}</label> */}
+                            <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
                         </div>
                     </div>
                 );
             })}
+            <div>
             <div>PAGE {page}</div>
             <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button onClick={() => handlePageChange(page + 1)}>Next</button>
+            </div>
         </div>
     );
 }

@@ -2,8 +2,9 @@ const express = require("express")
 const router = express.Router()
 const { coffeeplaces, Favourite } = require("../models")
 const { Op } = require("sequelize")
+const { validateToken} = require("../middleware/AuthMiddleware")
 
-router.get("/", async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
     const page = req.query.page
     const searchword = req.query.searchword || ''
 
@@ -22,8 +23,7 @@ router.get("/", async (req, res) => {
             ]
         },
         limit: 5, offset: (page - 1) * 5 });
-    // console.log(req.user)
-    // const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
+    const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
     // res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
     // console.log(listOfCafe)
     
@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
     console.log(countOfResult)
     console.log(maxPage)
     console.log("---------------END--------------")
-    res.json({ listOfCafe: listOfCafe, maxPage: maxPage})
+    res.json({ listOfCafe: listOfCafe, maxPage: maxPage, favouriteCafes: favouriteCafes})
 });
 
 // router.get("/search/:searchword", async (req, res) => {
