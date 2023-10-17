@@ -111,7 +111,7 @@ function Home() {
             <div>
             <div>PAGE {page}</div>
             <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button onClick={() => handlePageChange(page + 1)}>Next</button>
+            <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             </div>
         </div>
     );
