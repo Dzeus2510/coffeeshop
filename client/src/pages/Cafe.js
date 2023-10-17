@@ -68,8 +68,16 @@ function Cafe() {
             <div className="leftSide">
                 <div className="post" id="individual">
                     <div className="title"> {cafeObject.name} </div>
-                    <div className="body">{cafeObject.address}</div>
-                    <div className="footer">{cafeObject.cat}</div>
+                    <div className="body">
+                        <p>{cafeObject.address}</p>
+                        <div>{cafeObject.phone}</div>
+                        <div>{cafeObject.stars}⭐({cafeObject.review})</div>
+                    </div>
+                    <div className="footer">
+                        <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website}>
+                        {(cafeObject.website === 'No Website') ? "No Website xD" : "Website"}
+                        </a>
+                    </div>
                 </div>
             </div>
             <div className="rightSide">
@@ -90,7 +98,7 @@ function Cafe() {
                         return (
                             <div key={key} className="review">
                                 {review.reviewBody}
-                                <label onClick={() => {nav(`/profile/${authState.id}`)}} style={{color:"red"}}>= {review.username}</label>
+                                <label onClick={() => { nav(`/profile/${authState.id}`) }} style={{ color: "red" }}>= {review.username}</label>
                                 {authState.username === review.username && (
                                     <button
                                         onClick={() => {

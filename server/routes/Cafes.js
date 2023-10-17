@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const { sequelize, coffeeplaces, Favourite } = require("../models")
+const { coffeeplaces, Favourite } = require("../models")
 const { Op } = require("sequelize")
 
 router.get("/", async (req, res) => {
@@ -43,9 +43,12 @@ router.get("/", async (req, res) => {
         }});
 
     const maxPage =  Math.ceil(countOfResult / 5);
+    console.log(req.query.searchword)
+    console.log(searchword)
     console.log(req.query.page)
     console.log(countOfResult)
     console.log(maxPage)
+    console.log("---------------END--------------")
     res.json({ listOfCafe: listOfCafe, maxPage: maxPage})
 });
 

@@ -4,16 +4,26 @@ const { User } = require("../models");
 const bcrypt = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 const { validateToken } = require('../middleware/AuthMiddleware')
+const { Op } = require("sequelize")
 
 router.post("/", async (req, res) => {
     const { username, password } = req.body;
-    bcrypt.hash(password, 10).then((hash) => {
-        User.create({
-            username: username,
-            password: hash,
+    const checkExistAccount = await User.count({where: {
+                username: username
+    }});
+    console.log(checkExistAccount)
+    if (checkExistAccount === 0){
+        bcrypt.hash(password, 10).then((hash) => {
+            User.create({
+                username: username,
+                password: hash,
+            })
+            res.json("Success")
         })
-        res.json("Success")
-    })
+    }
+    else{
+        res.json("Failed")
+    }
 });
 //Registration, create a new account, then return json "Success"
 

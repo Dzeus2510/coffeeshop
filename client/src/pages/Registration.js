@@ -8,7 +8,7 @@ function Registration() {
 
     let nav = useNavigate()
 
-    const initialValues ={
+    const initialValues = {
         username: "",
         password: "",
     };
@@ -21,28 +21,32 @@ function Registration() {
 
     const onSubmit = (data) => {
         axios.post("http://localhost:3001/auth", data).then((response) => {
-            alert("created Successfully")
-            nav("/login")
-    });
+            if (response.data === "Success") {
+                alert("created Successfully")
+                nav("/login")
+            } else {
+                alert("This Username is Taken(lol its not 'Taken')")
+            }
+        });
     };
     //after done creating account, it will redirect to login page
 
-  return (
-    <div className="createPostPage">
-        <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema} >
-            <Form className="formContainer">
-                <br></br><label>Username: </label>
-                <ErrorMessage name="username" component="span" />
-                <Field id="formContainer" name="username" placeholder="Username" />
-                <br></br><label>Password: </label>
-                <ErrorMessage name="password" component="span" />
-                <Field id="formContainer" type="password" name="password" placeholder="Password" />
-                <br></br>
-                <button type="submit">Create Account</button>
-            </Form>
-        </Formik>
-    </div>
-  )
+    return (
+        <div className="createPostPage">
+            <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema} >
+                <Form className="formContainer">
+                    <br></br><label>Username: </label>
+                    <ErrorMessage name="username" component="span" />
+                    <Field id="formContainer" name="username" placeholder="Username" />
+                    <br></br><label>Password: </label>
+                    <ErrorMessage name="password" component="span" />
+                    <Field id="formContainer" type="password" name="password" placeholder="Password" />
+                    <br></br>
+                    <button type="submit">Create Account</button>
+                </Form>
+            </Formik>
+        </div>
+    )
 }
 
 export default Registration

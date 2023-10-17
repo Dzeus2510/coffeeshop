@@ -46,7 +46,7 @@ function Home() {
     const searchCafe = (event) => {
         setPage(1);
         setSearchword(event.target.value);
-        navigate(`/?page=1&&searchword=${event.target.value}`, {
+        navigate(`/?page=${page}&&searchword=${event.target.value}`, {
             headers: { accessToken: localStorage.getItem("accessToken") }
         });
     }
@@ -84,11 +84,11 @@ function Home() {
     return (
         <div>
             <div>PAGE {page} / {maxPage}</div>
-            <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button style={{display: page >= maxPage ? 'none' : ''}} onClick={() => handlePageChange(page + 1)}>Next</button>
+            <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
+            <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             <form>
-            <input type="text" name="searchword" onSubmit={searchCafe}></input>
-            <button type="submit">Search</button>
+                <input type="text" name="searchword" onSubmit={searchCafe}></input>
+                <button type="submit">Search</button>
             </form>
             {listOfCafe.map((value, key) => {
                 return (
@@ -100,13 +100,9 @@ function Home() {
                             <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={120} height={120}></img>
                         </div>
                         <div className="footer">
-                            <div onClick={() => {
-                                if(value.website === 'No Website') {
-                                    window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-                                } else {
-                                    window.location.href = value.website;
-                                }
-                                }}>{(value.website === 'No Website') ? "No Website xD" : "WEBSITE"}</div>
+                            <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
+                                {(value.website === 'No Website') ? "No Website xD" : "Website"}
+                            </a>
                             {/* <button onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>⭐ ★</button>
                             <label>{value.Favourites.length}</label> */}
                         </div>
@@ -114,7 +110,7 @@ function Home() {
                 );
             })}
             <div>PAGE {page}</div>
-            <button style={{display: page <= 1 ? 'none' : ''}} onClick={() => handlePageChange(page - 1)}>Previous</button>
+            <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button onClick={() => handlePageChange(page + 1)}>Next</button>
         </div>
     );
