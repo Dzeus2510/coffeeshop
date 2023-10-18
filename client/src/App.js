@@ -5,6 +5,7 @@ import "./App.css";
 import { AuthContext } from "./helpers/AuthContext";
 import Cafe from "./pages/Cafe";
 import ChangePassword from "./pages/ChangePassword";
+import Favourite from "./pages/Favourite";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
@@ -61,6 +62,7 @@ function App() {
               ) : (
                 <>
                   <Link to="/"> HomePage</Link>
+                  <Link to="/favourite">Favourite</Link>
                 </>
               )}
             </div>
@@ -76,6 +78,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/changepassword" element={<ChangePassword />} />
+            <Route path="/favourite" element={<Favourite />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>

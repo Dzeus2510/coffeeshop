@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../helpers/AuthContext";
 
 
-function Home() {
+function Favourite() {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [searchword, setSearchword] = useState('');
@@ -22,7 +22,7 @@ function Home() {
             const searchParam = urlParams.get("searchword")
             setPage(pageParam ? parseInt(pageParam) : 1);
             setSearchword(searchParam ? searchParam : "")
-            axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
+            axios.get(`http://localhost:3001/cafes/favourite/?page=${page}&&searchword=${searchword}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             }).then((response) => {
                 setListOfCafe(response.data.listOfCafe);
@@ -38,7 +38,7 @@ function Home() {
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
-        navigate(`/?page=${newPage}&&searchword=${searchword}`, {
+        navigate(`/favourite/?page=${newPage}&&searchword=${searchword}`, {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
@@ -46,7 +46,7 @@ function Home() {
     const searchCafe = (event) => {
         setPage(1);
         setSearchword(event.target.value);
-        navigate(`/?page=${page}&&searchword=${event.target.value}`, {
+        navigate(`/favourite/?page=${page}&&searchword=${event.target.value}`, {
             headers: { accessToken: localStorage.getItem("accessToken") }
         });
     }
@@ -116,4 +116,4 @@ function Home() {
     );
 }
 
-export default Home
+export default Favourite

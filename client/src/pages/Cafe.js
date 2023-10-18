@@ -88,6 +88,7 @@ function Cafe() {
                 <div className="post" id="individual">
                     <div className="title"> {cafeObject.name} </div>
                     <div className="body">
+                        <div>{cafeObject.cat}</div>
                         <p>{cafeObject.address}</p>
                         <div>{cafeObject.phone}</div>
                         <div>{cafeObject.stars}⭐({cafeObject.review})</div>
