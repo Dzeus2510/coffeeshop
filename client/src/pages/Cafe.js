@@ -6,14 +6,18 @@ import { AuthContext } from "../helpers/AuthContext";
 function Cafe() {
     let { id } = useParams();
     const [cafeObject, setCafeObject] = useState({});
+    const [favourite, setFavourite] = useState([])
     const [reviews, setReviews] = useState([]);
     const [newReview, setNewReview] = useState("");
     const { authState } = useContext(AuthContext);
 
     let nav = useNavigate()
     useEffect(() => {
-        axios.get(`http://localhost:3001/cafes/byId/${id}`).then((response) => {
+        axios.get(`http://localhost:3001/cafes/byId/${id}`, {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        }).then((response) => {
             setCafeObject(response.data);
+            setFavourite(response.data.Favourites)
         });
         //get the cafe with the chosen id
 
@@ -63,6 +67,21 @@ function Cafe() {
     };
     //delete the review
 
+    const favouriteACafe = () => {
+        axios.post(`http://localhost:3001/favourites/cafe`,{
+            coffeeplaceId: cafeObject.id,
+        },
+        {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        }).then((response) => {
+            if (response.data.error) {
+                console.log(response.data.error)
+            } else {
+                window.location.reload(false);
+            }
+        })
+    }
+
     return (
         <div className="postPage">
             <div className="leftSide">
@@ -77,6 +96,7 @@ function Cafe() {
                         <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website}>
                         {(cafeObject.website === 'No Website') ? "No Website xD" : "Website"}
                         </a>
+                        <button onClick={favouriteACafe} className={(favourite.length !== 0) ? "unfavouritedCafe" : "favouritedCafe"}>{(favourite.length !== 0) ? "⭐" : "★"}</button>
                     </div>
                 </div>
             </div>

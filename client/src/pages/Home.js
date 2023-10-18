@@ -109,7 +109,7 @@ function Home() {
                 );
             })}
             <div>
-            <div>PAGE {page}</div>
+            <div>PAGE {page} / {maxPage}</div>
             <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             </div>

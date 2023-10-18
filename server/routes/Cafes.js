@@ -8,9 +8,14 @@ router.get("/", validateToken, async (req, res) => {
     const page = req.query.page
     const searchword = req.query.searchword || ''
 
-    const listOfCafe = await coffeeplaces.findAll({ include: [Favourite],
+    const listOfCafe = await coffeeplaces.findAll({
+        include: [{
+            model: Favourite,
+            where: {UserId: req.user.id},
+            required: false
+            }],
         where: {
-            [Op.or]: [
+                [Op.or]: [
                 {
                     name: {
                         [Op.like]: '%' + searchword + '%'
@@ -22,12 +27,14 @@ router.get("/", validateToken, async (req, res) => {
                 }
             ]
         },
-        limit: 5, offset: (page - 1) * 5 });
+        order: [[Favourite, 'UserId', 'DESC']],
+        limit: 5, offset: (page - 1) * 5,
+        subQuery: false});
     const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
     // res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
     // console.log(listOfCafe)
     
-    const countOfResult = await coffeeplaces.count({ include: [Favourite],
+    const countOfResult = await coffeeplaces.count({ include: [{model: Favourite, where: {UserId: req.user.id}, required: false}],
         where: {
             [Op.or]: [
                 {
@@ -79,9 +86,10 @@ router.get("/", validateToken, async (req, res) => {
 //     }
 // })
 
-router.get('/byId/:id', async (req, res) => {
+router.get('/byId/:id', validateToken, async (req, res) => {
     const id = req.params.id
-    const cafe = await coffeeplaces.findByPk(id)
+    const cafe = await coffeeplaces.findByPk(id, {include:[{model: Favourite, where: {UserId: req.user.id}, required: false}]})
+    console.log(cafe.Favourites.length)
     res.json(cafe)
 })
 
