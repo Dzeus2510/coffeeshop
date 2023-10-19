@@ -6,7 +6,12 @@ const { validateToken} = require("../middleware/AuthMiddleware")
 
 router.get("/", validateToken, async (req, res) => {
     const page = req.query.page
-    const searchword = req.query.searchword || ''
+    const searchword = req.query.searchword
+    console.log(req.query)
+    console.log("---------------BEGIN SEARCH--------------")
+    console.log(req.query.searchword)
+    console.log(searchword)
+    console.log(req.query.page)
 
     const listOfCafe = await coffeeplaces.findAll({
         include: [{
@@ -48,7 +53,7 @@ router.get("/", validateToken, async (req, res) => {
                 }
             ]
         }});
-
+    console.log("---------------ENDED SEARCH--------------")
     const maxPage =  Math.ceil(countOfResult / 5);
     console.log(req.query.searchword)
     console.log(searchword)
