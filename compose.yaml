@@ -1,0 +1,53 @@
+version: "3"
+services:
+  coffeescript:
+    image: ruxdoang/coffeescraper:1.0
+    command: sh -c "node node_modules/puppeteer/install.mjs && cd /app/script && npm install && node index.js"
+    volumes:
+      - .:/app/script
+    environment:
+      MYSQL_HOSTNAME: mysql #host.docker.internal
+      MYSQL_USER: root
+      MYSQL_PASSWORD: doanngocvu25102003
+      MYSQL_DB: coffeeshop
+    depends_on:
+      - coffeemysql
+
+
+  coffeenode:
+    image: node:18-alpine
+    command: sh -c "cd /app/node && npm install && npm start"
+    ports:
+      - "3001:3001"
+    working_dir: /app/node
+    volumes:
+      - ./server:/app/node
+    environment:
+      MYSQL_HOSTNAME: mysql #host.docker.internal
+      MYSQL_USER: root
+      MYSQL_PASSWORD: doanngocvu25102003
+      MYSQL_DB: coffeeshop
+    depends_on:
+      - coffeescript
+
+  coffeereact:
+    image: node:18-alpine
+    command: sh -c "cd /app/react && npm install && npm start"
+    ports:
+      - "3000:3000"
+    working_dir: /app/react
+    volumes:
+      - ./client:/app/react
+    depends_on:
+      - coffeescript
+
+  coffeemysql:
+    image: mysql:8.0
+    volumes:
+      - coffeeshop-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: doanngocvu25102003
+      MYSQL_DATABASE: coffeeshop
+
+volumes:
+  coffeeshop-mysql-data:
