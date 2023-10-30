@@ -8,6 +8,7 @@ function Home() {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [searchword, setSearchword] = useState("");
+    const [input, setInput] = useState("");
     const [listOfCafe, setListOfCafe] = useState([]);
     const [favouriteCafes, setFavouriteCafes] = useState([]);
     const { authState } = useContext(AuthContext);
@@ -22,7 +23,7 @@ function Home() {
                 const pageParam = urlParams.get("page");
                 const searchParam = urlParams.get("searchword")
                 setPage(pageParam ? parseInt(pageParam) : 1);
-                setSearchword(searchParam ? searchParam : "")
+                setSearchword(searchParam ? searchParam : searchword)
                 axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
                     headers: { accessToken: localStorage.getItem("accessToken") }
                 }).then((response) => {
@@ -45,13 +46,15 @@ function Home() {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
+    //Change page
 
-    // const searchCafe = (event) => {
-    //     setSearchword(event.target.value);
-    //     // navigate(`/?searchword=${search}`, {
-    //     //     headers: { accessToken: localStorage.getItem("accessToken") }
-    //     // });
-    // }
+    const searchCafe = (newSearch) => {
+        setSearchword(newSearch);
+        navigate(`/?page=1&&searchword=${newSearch}`, {
+            headers: { accessToken: localStorage.getItem("accessToken") }
+        })
+    };
+    //searchword
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
@@ -81,6 +84,7 @@ function Home() {
             }
         })
     }
+    //favourite a cafe
 
     return (
         <div>
@@ -88,30 +92,32 @@ function Home() {
             <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             <form>
-                <input type="text" name="searchword" onSubmit={(event) => setSearchword(event.target.value)}></input>
+                <input type="text" name="searchword" onChange={(event) => setInput(event.target.value)} onSubmit={() => searchCafe(input)}></input>
                 <button type="submit">Search</button>
             </form>
-            {listOfCafe.map((value, key) => {
-                return (
-                    <div className="post"  >
-                        <div className="title">{value.name}</div>
-                        <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
-                            {value.address}
-                            <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={140} height={140}></img>
+            <div className="postDisplay">
+                {listOfCafe.map((value, key) => {
+                    return (
+                        <div className="post">
+                            <div className="title">{value.name}</div>
+                            <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
+                                {value.address}
+                                <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={200} height={180}></img>
+                            </div>
+                            <div className="footer">
+                                <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
+                                    {(value.website === 'No Website') ? "No Website xD" : "Website"}
+                                </a>
+                                <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
+                            </div>
                         </div>
-                        <div className="footer">
-                            <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
-                                {(value.website === 'No Website') ? "No Website xD" : "Website"}
-                            </a>
-                            <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
-                        </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
             <div>
-            <div>PAGE {page} / {maxPage}</div>
-            <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
+                <div>PAGE {page} / {maxPage}</div>
+                <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
+                <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             </div>
         </div>
     );

@@ -42,6 +42,7 @@ function Favourite() {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
+    //change page
 
     const searchCafe = (event) => {
         setPage(1);
@@ -50,6 +51,7 @@ function Favourite() {
             headers: { accessToken: localStorage.getItem("accessToken") }
         });
     }
+    //search address or name
 
     const favouriteACafe = (cafeId) => {
         axios.post("http://localhost:3001/favourites", { CafeId: cafeId }, {
@@ -79,6 +81,7 @@ function Favourite() {
             }
         })
     }
+    //favourite a cafe
 
 
     return (
@@ -90,27 +93,29 @@ function Favourite() {
                 <input type="text" name="searchword" onSubmit={searchCafe}></input>
                 <button type="submit">Search</button>
             </form>
-            {listOfCafe.map((value, key) => {
-                return (
-                    <div className="post"  >
-                        <div className="title">{value.name}</div>
-                        <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
-                            {value.address}
-                            <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={140} height={140}></img>
+            <div className="postDisplay">
+                {listOfCafe.map((value, key) => {
+                    return (
+                        <div className="post"  >
+                            <div className="title">{value.name}</div>
+                            <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
+                                {value.address}
+                                <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={140} height={140}></img>
+                            </div>
+                            <div className="footer">
+                                <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
+                                    {(value.website === 'No Website') ? "No Website xD" : "Website"}
+                                </a>
+                                <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
+                            </div>
                         </div>
-                        <div className="footer">
-                            <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
-                                {(value.website === 'No Website') ? "No Website xD" : "Website"}
-                            </a>
-                            <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
-                        </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
             <div>
-            <div>PAGE {page} / {maxPage}</div>
-            <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
+                <div>PAGE {page} / {maxPage}</div>
+                <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
+                <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
             </div>
         </div>
     );

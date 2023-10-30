@@ -5,13 +5,9 @@ const { Op } = require("sequelize")
 const { validateToken} = require("../middleware/AuthMiddleware")
 
 router.get("/", validateToken, async (req, res) => {
-    const page = req.query.page
-    const searchword = req.query.searchword
-    console.log(req.query)
     console.log("---------------BEGIN SEARCH--------------")
-    console.log(req.query.searchword)
-    console.log(searchword)
-    console.log(req.query.page)
+    console.log(req.query)
+    console.log("---------------------------------------")
 
     const listOfCafe = await coffeeplaces.findAll({
         include: [{
@@ -19,48 +15,52 @@ router.get("/", validateToken, async (req, res) => {
             where: {UserId: req.user.id},
             required: false
             }],
+            //include the favourite, not required, work like a left join
         where: {
                 [Op.or]: [
                 {
                     name: {
-                        [Op.like]: '%' + searchword + '%'
+                        [Op.like]: '%' + req.query.searchword + '%'
                     }
                 }, {
                     address: {
-                        [Op.like]: '%' + searchword + '%'
+                        [Op.like]: '%' + req.query.searchword + '%'
                     }
                 }
             ]
         },
+        //where name or adress have %name%
         order: [[Favourite, 'UserId', 'DESC']],
-        limit: 5, offset: (page - 1) * 5,
+        //order by favourite to push all user favourite to the top
+        limit: 12, offset: (req.query.page - 1) * 12,
+        //paginator: 5 coffee per page
         subQuery: false});
+        //subquery false to let the query to run following the order
     const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
-    // res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
-    // console.log(listOfCafe)
-    
+
     const countOfResult = await coffeeplaces.count({ include: [{model: Favourite, where: {UserId: req.user.id}, required: false}],
         where: {
             [Op.or]: [
                 {
                     name: {
-                        [Op.like]: '%' + searchword + '%'
+                        [Op.like]: '%' + req.query.searchword + '%'
                     }
                 }, {
                     address: {
-                        [Op.like]: '%' + searchword + '%'
+                        [Op.like]: '%' + req.query.searchword + '%'
                     }
                 }
             ]
         }});
-    console.log("---------------ENDED SEARCH--------------")
-    const maxPage =  Math.ceil(countOfResult / 5);
+        //count all coffee places
+    console.log("----------------------------------------")
+    const maxPage =  Math.ceil(countOfResult / 12);
+    //set maxPage as count / 5
     console.log(req.query.searchword)
-    console.log(searchword)
     console.log(req.query.page)
     console.log(countOfResult)
     console.log(maxPage)
-    console.log("---------------END--------------")
+    console.log("------------------END-----------------")
     res.json({ listOfCafe: listOfCafe, maxPage: maxPage, favouriteCafes: favouriteCafes})
 });
 
@@ -74,6 +74,7 @@ router.get("/favourite", validateToken, async (req, res) => {
             where: {UserId: req.user.id},
             required: true
             }],
+            //get all user's favourite cafe
         where: {
                 [Op.or]: [
                 {
@@ -88,11 +89,11 @@ router.get("/favourite", validateToken, async (req, res) => {
             ]
         },
         order: [[Favourite, 'UserId', 'DESC']],
-        limit: 5, offset: (page - 1) * 5,
+        limit: 12, offset: (page - 1) * 12,
         subQuery: false});
+        //search function, paginator, etc
     const favouriteCafes = await Favourite.findAll({ where: { UserId: req.user.id} })
-    // res.json({ listOfCafe: listOfCafe, favouriteCafes: favouriteCafes });
-    // console.log(listOfCafe)
+    //set favouriteCafes as all favourite of user
     
     const countOfResult = await coffeeplaces.count({ include: [{model: Favourite, where: {UserId: req.user.id}, required: true}],
         where: {
@@ -108,8 +109,9 @@ router.get("/favourite", validateToken, async (req, res) => {
                 }
             ]
         }});
+    //count all coffeeplace of users favourite then / 5 to find max pages
 
-    const maxPage =  Math.ceil(countOfResult / 5);
+    const maxPage =  Math.ceil(countOfResult / 12);
     console.log(req.query.searchword)
     console.log(searchword)
     console.log(req.query.page)
@@ -125,7 +127,5 @@ router.get('/byId/:id', validateToken, async (req, res) => {
     console.log(cafe.Favourites.length)
     res.json(cafe)
 })
-
-// router.put()
 
 module.exports = router

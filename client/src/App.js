@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Link, Route, BrowserRouter as Router, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import { AuthContext } from "./helpers/AuthContext";
 import Cafe from "./pages/Cafe";
@@ -12,13 +12,14 @@ import PageNotFound from "./pages/PageNotFound";
 import Profile from "./pages/Profile";
 import Registration from "./pages/Registration";
 
-function App() {
+function Root() {
   const [authState, setAuthState] = useState({
     username: "",
     id: 0,
     status: false,
   });
 
+  let nav = useNavigate()
 
   useEffect(() => {
     axios
@@ -51,7 +52,6 @@ function App() {
   return (
     <div className="App">
       <AuthContext.Provider value={{ authState, setAuthState }}>
-        <Router>
           <div className="navbar">
             <div className="links">
               {!authState.status ? (
@@ -67,7 +67,8 @@ function App() {
               )}
             </div>
             <div className="loggedInContainer">
-              <h1>{authState.username} </h1>
+              <h1 onClick={() =>  nav(`/profile/${authState.id}`)}>{authState.username} </h1>
+              <nav/>
               {authState.status && <Link to="/login"><button onClick={logout}> Logout</button></Link>}
             </div>
           </div>
@@ -81,9 +82,16 @@ function App() {
             <Route path="/favourite" element={<Favourite />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
-        </Router>
       </AuthContext.Provider>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Root />
+    </Router>
   );
 }
 

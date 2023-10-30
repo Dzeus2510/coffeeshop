@@ -10,7 +10,6 @@ function Cafe() {
     const [reviews, setReviews] = useState([]);
     const [newReview, setNewReview] = useState("");
     const { authState } = useContext(AuthContext);
-    let noimg = "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg"
 
     let nav = useNavigate()
     useEffect(() => {
@@ -82,11 +81,12 @@ function Cafe() {
             }
         })
     }
+    //favourite a cafe
 
     return (
         <div className="postPage">
             <div className="leftSide">
-                <div className="post" id="individual">
+                <div className="postCafe" id="individual">
                     <div className="title"> {cafeObject.name} </div>
                     <div className="body" style={{backgroundImage:(cafeObject.image === "No Img XD") ? "" : `url(${cafeObject.image})`, backgroundSize: "cover"}}>
                         <div>{cafeObject.cat}</div>

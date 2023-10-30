@@ -139,16 +139,23 @@ async function clickAndGoBack(page) {
 
 async function getData(page) {
   const html = await page.content();
+  //fetch all html content
   const $ = cheerio.load(html);
+  //load the html content into cheerio, a library use to manipulate html
   const divTags = $("div");
+  //using cheerio to get all "div" elements
   const parents = [];
+  //make a parents array to store the parent element of div
   divTags.each((i, el) => {
     const datavalue = $(el).attr("role");
+    //check in each divTags to see if there any attribute "role"
     if (!datavalue) {
       return;
+      //if there are none, return to continue the loop
     }
     if (datavalue.includes("main")) {
       parents.push($(el).parent());
+      //if there are role, check if there any "main" inside the whole div, if there is, push it in the parents array
     }
   });
 
@@ -158,48 +165,53 @@ async function getData(page) {
 
   parents.forEach((parent) => {
     const website = parent.find('a[data-tooltip="Open website"]').attr("href") ? parent.find('a[data-tooltip="Open website"]').attr("href") : "No Website";
-    // find a div that includes the class fontHeadlineSmall
+    // find a div that includes the data-tooltip = Open Website to get its webpage
     const storeName = parent.find("h1").text();
-    // find span that includes class fontBodyMedium
+    // find span that includes h1 to get its name
     const phonenum = parent.find('button[data-tooltip="Copy phone number"]').text() ? parent.find('button[data-tooltip="Copy phone number"]').text() : "No Phone";
+    //check if there are phone number to get its phonenum
     const address = parent.find('button[data-tooltip="Copy address"]').text();
+    //copy its address
     const cat = parent.find('button[class="DkEaL "]').text();
+    //get category
     const stars = parent.find('span.ceNzKf').attr("aria-label") ? parseFloat(parent.find('span.ceNzKf').attr("aria-label")) : "No Stars";
+    //check if there are stars to get stars
     const reviews = parent.find('button[class="HHrUdb fontTitleSmall rqjGif"] > span').text() ? parseInt(parent.find('button[class="HHrUdb fontTitleSmall rqjGif"] > span').text()) : "No Review"
+    //check if there are reviews to get number of reviews
     const img = parent.find('button[class="aoRNLd kn2E5e NMjTrf lvtCsd "] > img').attr("src") ? parent.find('button[class="aoRNLd kn2E5e NMjTrf lvtCsd "] > img').attr("src") : "No Img xD"
+    //check if there are image to get image
 
     coffeeshop.push({
       address: address,
       category: cat,
       phone: phonenum,
-      // googleUrl: url,
       bizWebsite: website,
       storeName,
-      // ratingText,
       stars: stars,
       numberOfReviews: reviews,
       image: img,
     });
 
     con.query("SELECT COUNT(*) FROM coffeeshop.coffeeplaces WHERE address = ?", [address], function (error, result) {
-      //Display the records one by one
       const count = result[0]['COUNT(*)'];
+      //count to check if there already a coffeeplace with the same address before
       if (count == 0) {
         var sql = "INSERT INTO coffeeplaces (name, address, cat, phone, website, stars, review, createdAt, updatedAt, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, dformat, img], function (err, result) {
           if (err) throw err;
           console.log("NEW record inserted");
+          //if there are none in database, add new coffeeplace
         });
       } else {
         var sql = "UPDATE coffeeplaces SET name = ?, address = ?, cat = ?, phone = ?, website = ?, stars = ?, review = ?, updatedAt = ?, image = ? WHERE address = ?";
         con.query(sql, [storeName, address, cat, phonenum, website, stars, reviews, dformat, img, address], function (err, result) {
           if (err) throw err;
           console.log("OLD record updated");
+          //if there already have one, update the coffeeplace
         });
       }
     });
 
-    // console.log(coffeeshop)
     return coffeeshop;
   })
 };

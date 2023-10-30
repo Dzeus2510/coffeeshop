@@ -3,7 +3,7 @@
     "username": "root",
     "password": "doanngocvu25102003",
     "database": "coffeeshop",
-    "host": "coffeemysql",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
