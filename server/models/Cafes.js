@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING,
-        },
+        }
     })
 
     Cafes.associate = (models) => {

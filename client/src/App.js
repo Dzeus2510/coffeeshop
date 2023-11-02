@@ -5,6 +5,7 @@ import "./App.css";
 import { AuthContext } from "./helpers/AuthContext";
 import Cafe from "./pages/Cafe";
 import ChangePassword from "./pages/ChangePassword";
+import CreateCoffee from "./pages/CreateCoffee";
 import Favourite from "./pages/Favourite";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -63,6 +64,7 @@ function Root() {
                 <>
                   <Link to="/"> HomePage</Link>
                   <Link to="/favourite">Favourite</Link>
+                  <Link to="/createshop">Create</Link>
                 </>
               )}
             </div>
@@ -76,6 +78,7 @@ function Root() {
             <Route path="/" element={<Home />} />
             <Route path="/cafe/:id" element={<Cafe />} />
             <Route path="/registration" element={<Registration />} />
+            <Route path="/createshop" element={<CreateCoffee />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/changepassword" element={<ChangePassword />} />

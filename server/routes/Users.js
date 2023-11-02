@@ -75,4 +75,5 @@ router.put('/changepassword', validateToken, async (req, res) => {
 })
 //Change password, compare user input password to current password in database, if they match, continue to update the password
 
+
 module.exports = router

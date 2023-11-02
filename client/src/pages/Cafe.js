@@ -95,7 +95,7 @@ function Cafe() {
                         <div>{cafeObject.stars}⭐({cafeObject.review})</div>
                     </div>
                     <div className="footer">
-                        <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website}>
+                        <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website} target="_blank">
                         {(cafeObject.website === 'No Website') ? "No Website xD" : "Website"}
                         </a>
                         <button onClick={favouriteACafe} className={(favourite.length !== 0) ? "unfavouritedCafe" : "favouritedCafe"}>{(favourite.length !== 0) ? "⭐" : "★"}</button>
