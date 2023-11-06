@@ -141,6 +141,13 @@ router.post('/claimcoffee/:id', validateToken, async (req, res) => {
     console.log("claimed the coffee shop ")
 })
 
+router.post('/disclaim/:id', validateToken, async(req, res) => {
+    const id = req.params.id
+    const cafe = await coffeeplaces.findByPk(id)
+    await cafe.update({ UserId: null })
+    console.log("disclaimed the coffee shop ")
+})
+
 router.post('/createcoffee', validateToken, async (req, res) => {
     var { name, address, category, phone, website, image } = req.body;
     console.log(category)

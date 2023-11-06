@@ -67,6 +67,37 @@ function Cafe() {
     };
     //delete the review
 
+    const claimCoffee = (event) => {
+        event.stopPropagation();
+        let claimaddress = prompt("Please Re-enter the coffee address");
+        if(claimaddress === cafeObject.address) {
+            axios.post(`http://localhost:3001/cafes/claimcoffee/${id}`,{
+        },
+        {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+            alert('You have claimed the coffeeshop');
+        } else if (claimaddress == null) {
+            alert('You have cancelled!');
+        } else {
+            alert('You inputed the wrong address!');
+        }
+    }
+
+    const disclaimCoffee = (event) => {
+        event.stopPropagation();
+        if(window.confirm('Are u sure want to disclaimlete?')) {
+            axios.post(`http://localhost:3001/cafes/disclaim/${id}`,{
+        },
+        {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+            alert('disclaimed');
+        } else {
+            alert('You have cancelled!');
+        }
+    }
+
     const favouriteACafe = () => {
         axios.post(`http://localhost:3001/favourites/cafe`,{
             coffeeplaceId: cafeObject.id,
@@ -100,6 +131,8 @@ function Cafe() {
                         </a>
                         <button onClick={favouriteACafe} className={(favourite.length !== 0) ? "unfavouritedCafe" : "favouritedCafe"}>{(favourite.length !== 0) ? "⭐" : "★"}</button>
                     </div>
+                    <button style={{ display: cafeObject.UserId != null ? 'none' : '' }} onClick={claimCoffee}>Claim</button>
+                    <button style={{ display: cafeObject.UserId == authState.id ? '' : 'none' }} onClick={disclaimCoffee}>Disclaim</button>
                 </div>
             </div>
             <div className="rightSide">
