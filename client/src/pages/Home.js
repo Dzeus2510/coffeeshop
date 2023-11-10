@@ -8,7 +8,6 @@ function Home() {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [searchword, setSearchword] = useState("");
-    const [input, setInput] = useState("");
     const [listOfCafe, setListOfCafe] = useState([]);
     const [favouriteCafes, setFavouriteCafes] = useState([]);
     const { authState } = useContext(AuthContext);
@@ -48,9 +47,9 @@ function Home() {
     };
     //Change page
 
-    const searchCafe = (newSearch) => {
-        setSearchword(newSearch);
-        navigate(`/?page=1&&searchword=${newSearch}`, {
+    const handleSearch = async (event) => {
+        event.preventDefault()
+        await axios.get(`http://localhost:3001/cafes/?page=1&&searchword=${searchword}`, {
             headers: { accessToken: localStorage.getItem("accessToken") }
         })
     };
@@ -91,9 +90,9 @@ function Home() {
             <div>PAGE {page} / {maxPage}</div>
             <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
             <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
-            <form>
-                <input type="text" name="searchword" onChange={(event) => setInput(event.target.value)} onSubmit={() => searchCafe(input)}></input>
-                <button type="submit">Search</button>
+            <form >
+                <input type="text" name="searchword" onChange={(event) => setSearchword(event.target.value)}></input>
+                {/* <button type="submit">Search</button> */}
             </form>
             <div className="postDisplay">
                 {listOfCafe.map((value, key) => {
@@ -101,12 +100,13 @@ function Home() {
                         <div className="post">
                             <div className="title">{value.name}</div>
                             <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
-                                {value.address}
+                                {value.address}<br></br>
+                                Owner: {(value.UserId) ? (value.User.username) : "none"}<br></br>
                                 <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={200} height={180}></img>
                             </div>
                             <div className="footer">
                                 <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website} target="_blank">
-                                    {(value.website === 'No Website') ? "No Website xD" : "Website"}
+                                    {(value.website === 'No Website') ? "None Web" : "Website"}
                                 </a>
                                 <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
                             </div>

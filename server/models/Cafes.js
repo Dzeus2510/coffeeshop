@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         Cafes.hasMany(models.Favourite, {
             onDelete: "cascade",
         });
+
+        Cafes.belongsTo(models.User, {
+            foreignKey: 'UserId'
+        });
     }
     return Cafes
 }

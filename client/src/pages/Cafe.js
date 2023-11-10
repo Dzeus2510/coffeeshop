@@ -131,6 +131,7 @@ function Cafe() {
                         </a>
                         <button onClick={favouriteACafe} className={(favourite.length !== 0) ? "unfavouritedCafe" : "favouritedCafe"}>{(favourite.length !== 0) ? "⭐" : "★"}</button>
                     </div>
+                    <p>{(cafeObject.UserId) ? `This coffee is owned by ${cafeObject.User.username}` : `No User owned this coffeeshop` }</p>
                     <button style={{ display: cafeObject.UserId != null ? 'none' : '' }} onClick={claimCoffee}>Claim</button>
                     <button style={{ display: cafeObject.UserId == authState.id ? '' : 'none' }} onClick={disclaimCoffee}>Disclaim</button>
                 </div>

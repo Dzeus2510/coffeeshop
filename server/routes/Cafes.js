@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const { coffeeplaces, Favourite } = require("../models")
+const { coffeeplaces, Favourite, User } = require("../models")
 const { Op } = require("sequelize")
 const { validateToken } = require("../middleware/AuthMiddleware")
 
@@ -14,7 +14,11 @@ router.get("/", validateToken, async (req, res) => {
             model: Favourite,
             where: { UserId: req.user.id },
             required: false
-        }],
+        },
+        {
+            model: User,
+            required: false
+        },],
         //include the favourite, not required, work like a left join
         where: {
             [Op.or]: [
@@ -129,7 +133,7 @@ router.get("/favourite", validateToken, async (req, res) => {
 
 router.get('/byId/:id', validateToken, async (req, res) => {
     const id = req.params.id
-    const cafe = await coffeeplaces.findByPk(id, { include: [{ model: Favourite, where: { UserId: req.user.id }, required: false }] })
+    const cafe = await coffeeplaces.findByPk(id, { include: [{ model: Favourite, where: { UserId: req.user.id }, required: false }, { model: User, required: false}] })
     console.log(cafe.Favourites.length)
     res.json(cafe)
 })
@@ -141,7 +145,7 @@ router.post('/claimcoffee/:id', validateToken, async (req, res) => {
     console.log("claimed the coffee shop ")
 })
 
-router.post('/disclaim/:id', validateToken, async(req, res) => {
+router.post('/disclaim/:id', validateToken, async (req, res) => {
     const id = req.params.id
     const cafe = await coffeeplaces.findByPk(id)
     await cafe.update({ UserId: null })
@@ -152,10 +156,10 @@ router.post('/createcoffee', validateToken, async (req, res) => {
     var { name, address, category, phone, website, image } = req.body;
     console.log(category)
     console.log(req.body)
-    const phonenum = (phone == "" ? "No Phone": phone)
-    const coffeewebsite = (website == "" ? "No Website": website)
-    const coffeeimage = (image == "" ? "No Img xD": image)
-    
+    const phonenum = (phone == "" ? "No Phone" : phone)
+    const coffeewebsite = (website == "" ? "No Website" : website)
+    const coffeeimage = (image == "" ? "No Img xD" : image)
+
     const stars = "No Stars"
     const review = "No Reviews"
 
