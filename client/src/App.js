@@ -62,7 +62,7 @@ function Root() {
                 </>
               ) : (
                 <>
-                  <Link to="/"> HomePage</Link>
+                  <Link to="/?page=1&searchword="> HomePage</Link>
                   <Link to="/favourite">Favourite</Link>
                   <Link to="/createshop">Create</Link>
                 </>

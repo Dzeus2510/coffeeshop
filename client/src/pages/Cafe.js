@@ -32,6 +32,7 @@ function Cafe() {
             .post(
                 "http://localhost:3001/reviews",
                 {
+                    UserId: authState.id,
                     reviewBody: newReview,
                     coffeeplaceId: cafeObject.id,
                 },
@@ -133,7 +134,7 @@ function Cafe() {
                     </div>
                     <p>{(cafeObject.UserId) ? `This coffee is owned by ${cafeObject.User.username}` : `No User owned this coffeeshop` }</p>
                     <button style={{ display: cafeObject.UserId != null ? 'none' : '' }} onClick={claimCoffee}>Claim</button>
-                    <button style={{ display: cafeObject.UserId == authState.id ? '' : 'none' }} onClick={disclaimCoffee}>Disclaim</button>
+                    <button style={{ display: cafeObject.UserId === authState.id ? '' : 'none' }} onClick={disclaimCoffee}>Disclaim</button>
                 </div>
             </div>
             <div className="rightSide">
@@ -155,7 +156,7 @@ function Cafe() {
                             <div key={key} className="review">
                                 {review.reviewBody}
                                 <label onClick={() => { nav(`/profile/${authState.id}`) }} style={{ color: "red" }}>= {review.username}</label>
-                                {authState.username === review.username && (
+                                {(authState.id === review.UserId || authState.id === cafeObject.UserId) && (
                                     <button
                                         onClick={() => {
                                             deleteReview(review.id);
