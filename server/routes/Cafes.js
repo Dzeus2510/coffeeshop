@@ -266,12 +266,12 @@ module.exports = router
  * tags:
  *   name: Cafes
  *   description: The cafes managing API
- *   components:
- *     securitySchemes:
- *       apiKey:
- *     type: apiKey
- *     in: header
- *     name: accessToken
+ * components:
+ *   securitySchemes:
+ *     apiKey:
+ *       type: apiKey
+ *       in: header
+ *       name: Authorization
  * /cafes/?page={page}&searchword={searchword}:
  *   get:
  *     summary: Lists all the cafes
