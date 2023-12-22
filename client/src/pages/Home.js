@@ -16,18 +16,12 @@ function Home() {
 
     const fetchData = async () => {
         try {
-            const page = (paramSearch.get('page') ? paramSearch.get('page') : 1 )
-            const searchword = (paramSearch.get('searchword') ? paramSearch.get('searchword') : "" )
-            console.log(paramSearch.get('searchword'))
-            console.log(paramSearch.get('page'))
-            console.log(page)
-            console.log(searchword)
-            console.log(paramSearch.toString())
-            
+            const page = paramSearch.get('page') || 1;
+            const searchword = paramSearch.get('searchword') || "";
+
             const response = await axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
                 headers: { accessToken: localStorage.getItem("accessToken") }
             });
-            console.log(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`)
             setListOfCafe(response.data.listOfCafe);
             setMaxPage(response.data.maxPage);
             setFavouriteCafes(response.data.favouriteCafes.map((favourite) => favourite.coffeeplaceId));
@@ -48,15 +42,20 @@ function Home() {
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
-        setParamSearch({page: `${newPage}`, searchword: (paramSearch.get('searchword') ? paramSearch.get('searchword') : "")});
+        setParamSearch({ page: `${newPage}`, searchword: (paramSearch.get('searchword') ? paramSearch.get('searchword') : "") });
         fetchData();
     };
     //Change page
 
     const searchCafe = async (newSearch) => {
         setSearchword(newSearch);
-        setParamSearch({page: page, searchword: `${newSearch}`});
+        setPage(1); // Reset page to 1
+        setParamSearch({ page: 1, searchword: newSearch });
         fetchData();
+
+        navigate(`/cafe/?page=1&searchword=${searchword}`, {
+            replace: true, // Replace the current entry in the history stack
+        });
     };
     //searchword
 
@@ -96,8 +95,8 @@ function Home() {
             <button style={{ display: paramSearch.get('page') <= 1 ? 'none' : '' }} onClick={() => handlePageChange(paramSearch.get('page') - 1)}>Previous</button>
             <button style={{ display: paramSearch.get('page') >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(paramSearch.get('page') - 1 + 2)}>Next</button>
             <div>Searchword: {paramSearch.get('searchword')}</div>
-            <form>
-                <input type="text" name="searchword" onSubmit={() => searchCafe()}></input>
+            <form onSubmit={(e) => { e.preventDefault(); searchCafe(searchword); window.location.reload(); }}>
+                <input type="text" name="searchword" value={searchword} onChange={(e) => setSearchword(e.target.value)}></input>
                 <button type="submit">Search</button>
             </form>
             <div className="postDisplay">
