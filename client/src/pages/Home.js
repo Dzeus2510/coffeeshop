@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from "../helpers/AuthContext";
 
 
@@ -8,51 +8,54 @@ function Home() {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [searchword, setSearchword] = useState("");
-    const [input, setInput] = useState("");
+    const [paramSearch, setParamSearch] = useSearchParams("");
     const [listOfCafe, setListOfCafe] = useState([]);
     const [favouriteCafes, setFavouriteCafes] = useState([]);
     const { authState } = useContext(AuthContext);
     let navigate = useNavigate()
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!localStorage.getItem("accessToken")) {
-                navigate("/login")
-            } else {
-                const urlParams = new URLSearchParams(window.location.search);
-                const pageParam = urlParams.get("page");
-                const searchParam = urlParams.get("searchword")
-                setPage(pageParam ? parseInt(pageParam) : 1);
-                setSearchword(searchParam ? searchParam : searchword)
-                axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
-                    headers: { accessToken: localStorage.getItem("accessToken") }
-                }).then((response) => {
-                    setListOfCafe(response.data.listOfCafe);
-                    setMaxPage(response.data.maxPage);
-                    setFavouriteCafes(response.data.favouriteCafes.map((favourite) => {
-                        return favourite.coffeeplaceId;
-                    }));
-                });
-            }
+    const fetchData = async () => {
+        try {
+            const page = paramSearch.get('page') || 1;
+            const searchword = paramSearch.get('searchword') || "";
+
+            const response = await axios.get(`http://localhost:3001/cafes/?page=${page}&&searchword=${searchword}`, {
+                headers: { accessToken: localStorage.getItem("accessToken") }
+            });
+            setListOfCafe(response.data.listOfCafe);
+            setMaxPage(response.data.maxPage);
+            setFavouriteCafes(response.data.favouriteCafes.map((favourite) => favourite.coffeeplaceId));
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
-        fetchData();
+    };
+
+    useEffect(() => {
+        if (!localStorage.getItem("accessToken")) {
+            navigate("/login");
+        } else {
+            fetchData();
+        }
     }, [page, searchword]);
     //if user not logged in, redirect to /login
     //else, set accesstoken in headers, and find all favourited cafe to highlight the favourite button, thus make it easier to detect which cafe user has favourited
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
-        navigate(`/?page=${newPage}&&searchword=${searchword}`, {
-            headers: { accessToken: localStorage.getItem("accessToken") }
-        })
+        setParamSearch({ page: `${newPage}`, searchword: (paramSearch.get('searchword') ? paramSearch.get('searchword') : "") });
+        fetchData();
     };
     //Change page
 
-    const searchCafe = (newSearch) => {
+    const searchCafe = async (newSearch) => {
         setSearchword(newSearch);
-        navigate(`/?page=1&&searchword=${newSearch}`, {
-            headers: { accessToken: localStorage.getItem("accessToken") }
-        })
+        setPage(1); // Reset page to 1
+        setParamSearch({ page: 1, searchword: newSearch });
+        fetchData();
+
+        navigate(`/cafe/?page=1&searchword=${searchword}`, {
+            replace: true, // Replace the current entry in the history stack
+        });
     };
     //searchword
 
@@ -88,11 +91,12 @@ function Home() {
 
     return (
         <div>
-            <div>PAGE {page} / {maxPage}</div>
-            <button style={{ display: page <= 1 ? 'none' : '' }} onClick={() => handlePageChange(page - 1)}>Previous</button>
-            <button style={{ display: page >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(page + 1)}>Next</button>
-            <form>
-                <input type="text" name="searchword" onChange={(event) => setInput(event.target.value)} onSubmit={() => searchCafe(input)}></input>
+            <div>PAGE {paramSearch.get('page') ? paramSearch.get('page') : (page)} / {maxPage}</div>
+            <button style={{ display: paramSearch.get('page') <= 1 ? 'none' : '' }} onClick={() => handlePageChange(paramSearch.get('page') - 1)}>Previous</button>
+            <button style={{ display: paramSearch.get('page') >= maxPage ? 'none' : '' }} onClick={() => handlePageChange(paramSearch.get('page') - 1 + 2)}>Next</button>
+            <div>Searchword: {paramSearch.get('searchword')}</div>
+            <form onSubmit={(e) => { e.preventDefault(); searchCafe(searchword); window.location.reload(); }}>
+                <input type="text" name="searchword" value={searchword} onChange={(e) => setSearchword(e.target.value)}></input>
                 <button type="submit">Search</button>
             </form>
             <div className="postDisplay">
@@ -101,12 +105,13 @@ function Home() {
                         <div className="post">
                             <div className="title">{value.name}</div>
                             <div className="body" onClick={() => { navigate(`/cafe/${value.id}`) }}>
-                                {value.address}
+                                {value.address}<br></br>
+                                Owner: {(value.UserId) ? (value.User.username) : "none"}<br></br>
                                 <img src={value.image === 'No Img xD' ? "https://st4.depositphotos.com/14953852/24787/v/450/depositphotos_247872612-stock-illustration-no-image-available-icon-vector.jpg" : (value.image)} alt={value.name} width={200} height={180}></img>
                             </div>
                             <div className="footer">
-                                <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website}>
-                                    {(value.website === 'No Website') ? "No Website xD" : "Website"}
+                                <a href={(value.website === 'No Website') ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : value.website} target="_blank">
+                                    {(value.website === 'No Website') ? "None Web" : "Website"}
                                 </a>
                                 <button id="favbtn" onClick={() => { favouriteACafe(value.id); }} className={favouriteCafes.includes(value.id) ? "unfavouritedCafe" : "favouritedCafe"}>{(favouriteCafes.includes(value.id)) ? "⭐" : "★"}</button>
                             </div>

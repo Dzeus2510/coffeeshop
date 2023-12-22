@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
         Users.hasMany(models.Favourite, {
             onDelete: "cascade",
         });
+
+        Users.hasMany(models.Review, {
+            onDelete: "cascade",
+        })
+
+        Users.hasMany(models.coffeeplaces, {
+            onDelete: "cascade",
+        })
     }
 
 

@@ -3,6 +3,42 @@ const router = express.Router();
 const { Favourite } = require("../models");
 const { validateToken} = require("../middleware/AuthMiddleware")
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Favourite:
+ *       type: object
+ *       required:
+ *         - id
+ *         - coffeeplaceId
+ *         - UserId
+ *       properties:
+ *         id:
+ *           type: int
+ *           description: The auto-generated id of the favourite
+ *         coffeeplaceId:
+ *           type: string
+ *           description: The id of the favourited cafe
+ *         UserId:
+ *           type: string
+ *           description: The id of the user
+ *         createdAt:
+ *           type: string
+ *           format: date
+ *           description: The date the favourite was added
+ *         updatedAt:
+ *           type: string
+ *           format: date
+ *           description: The date the favourite was updated
+ *       example:
+ *         id: 70
+ *         coffeeplaceId: 76
+ *         UserId: 2
+ *         createdAt: '2023-10-17 07:58:55'
+ *         updatedAt: '2023-10-17 07:58:55'
+ */
+
 router.post("/", validateToken, async(req, res) => {
     const {CafeId} = req.body;
     const UserId = req.user.id
@@ -53,3 +89,36 @@ router.post("/cafe", validateToken, async(req, res) => {
 })
 
 module.exports = router
+
+/**
+ * @swagger
+ * tags:
+ *   name: Favourites
+ *   description: The favourites managing API
+ * /cafes/favourite:
+ *   get:
+ *     summary: Favourite/Disfavourite the cafes
+ *     tags: [Favourites]
+ *     responses:
+ *       200:
+ *         description: The favourites managing API
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ * /cafes/favourite?page=&searchword=:
+ *   get:
+ *     summary: Lists all the cafes favourited by the user
+ *     tags: [Favourites]
+ *     responses:
+ *       200:
+ *         description: The list of the cafes favourited by the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ */

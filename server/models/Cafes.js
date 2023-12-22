@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING,
-        },
+        }
     })
 
     Cafes.associate = (models) => {
@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
     
         Cafes.hasMany(models.Favourite, {
             onDelete: "cascade",
+        });
+
+        Cafes.belongsTo(models.User, {
+            foreignKey: 'UserId'
         });
     }
     return Cafes

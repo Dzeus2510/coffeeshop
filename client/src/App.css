@@ -27,14 +27,17 @@ body {
 
 .postDisplay {
   display: flex;
-  flex-flow: row wrap;
+  flex-wrap: wrap;
+  /* flex-flow: row wrap; */
   width: 100%;
 }
 
 .post {
-  flex-basis: 25%;
+  /* flex-basis: 25%; */
+  flex: 1 0 22%;
   max-width: 24%;
   float: left;
+  margin-left: 50px;
   margin-top: 50px;
   margin-bottom: 70px;
   border: 1px solid lightgray;

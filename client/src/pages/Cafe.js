@@ -32,6 +32,7 @@ function Cafe() {
             .post(
                 "http://localhost:3001/reviews",
                 {
+                    UserId: authState.id,
                     reviewBody: newReview,
                     coffeeplaceId: cafeObject.id,
                 },
@@ -67,6 +68,37 @@ function Cafe() {
     };
     //delete the review
 
+    const claimCoffee = (event) => {
+        event.stopPropagation();
+        let claimaddress = prompt("Please Re-enter the coffee address");
+        if(claimaddress === cafeObject.address) {
+            axios.post(`http://localhost:3001/cafes/claimcoffee/${id}`,{
+        },
+        {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+            alert('You have claimed the coffeeshop');
+        } else if (claimaddress == null) {
+            alert('You have cancelled!');
+        } else {
+            alert('You inputed the wrong address!');
+        }
+    }
+
+    const disclaimCoffee = (event) => {
+        event.stopPropagation();
+        if(window.confirm('Are u sure want to disclaimlete?')) {
+            axios.post(`http://localhost:3001/cafes/disclaim/${id}`,{
+        },
+        {
+            headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+            alert('disclaimed');
+        } else {
+            alert('You have cancelled!');
+        }
+    }
+
     const favouriteACafe = () => {
         axios.post(`http://localhost:3001/favourites/cafe`,{
             coffeeplaceId: cafeObject.id,
@@ -95,11 +127,14 @@ function Cafe() {
                         <div>{cafeObject.stars}⭐({cafeObject.review})</div>
                     </div>
                     <div className="footer">
-                        <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website}>
+                        <a href={(cafeObject.website === 'No Website') ?  'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : cafeObject.website} target="_blank">
                         {(cafeObject.website === 'No Website') ? "No Website xD" : "Website"}
                         </a>
                         <button onClick={favouriteACafe} className={(favourite.length !== 0) ? "unfavouritedCafe" : "favouritedCafe"}>{(favourite.length !== 0) ? "⭐" : "★"}</button>
                     </div>
+                    <p>{(cafeObject.UserId) ? `This coffee is owned by ${cafeObject.User.username}` : `No User owned this coffeeshop` }</p>
+                    <button style={{ display: cafeObject.UserId != null ? 'none' : '' }} onClick={claimCoffee}>Claim</button>
+                    <button style={{ display: cafeObject.UserId === authState.id ? '' : 'none' }} onClick={disclaimCoffee}>Disclaim</button>
                 </div>
             </div>
             <div className="rightSide">
@@ -120,11 +155,13 @@ function Cafe() {
                         return (
                             <div key={key} className="review">
                                 {review.reviewBody}
-                                <label onClick={() => { nav(`/profile/${authState.id}`) }} style={{ color: "red" }}>= {review.username}</label>
-                                {authState.username === review.username && (
+                                <label onClick={() => { nav(`/profile/${review.UserId}`) }} style={{ color: "red" }}>= {review.username}</label>
+                                {(authState.id === review.UserId || authState.id === cafeObject.UserId) && (
                                     <button
                                         onClick={() => {
-                                            deleteReview(review.id);
+                                            if(window.confirm("Do you want to delete " + review.username + "'s comment: " + review.reviewBody)){
+                                                deleteReview(review.id);
+                                            }
                                         }}
                                     >
                                         X

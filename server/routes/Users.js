@@ -1,10 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require("../models");
+const { User, coffeeplaces } = require("../models");
 const bcrypt = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 const { validateToken } = require('../middleware/AuthMiddleware')
 const { Op } = require("sequelize")
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - id
+ *         - username
+ *         - password
+ *       properties:
+ *         id:
+ *           type: int
+ *           description: The auto-generated id of the user
+ *         username:
+ *           type: string
+ *           description: The name of the user
+ *         password:
+ *           type: string
+ *           description: The password of the user (hashed)
+ *         createdAt:
+ *           type: string
+ *           format: date
+ *           description: The date the account was added
+ *         updatedAt:
+ *           type: string
+ *           format: date
+ *           description: The date the account was updated
+ *       example:
+ *         id: 1
+ *         username: vudn
+ *         password: '$2a$10$ANbjYjZw84gKPxQ7Tp8G0.uSzJ9fWPc0lEnk03aOCeJYR99hSkVpi'
+ *         createdAt: '2023-10-11 03:52:36'
+ *         updatedAt: '2023-10-11 03:52:36'
+ */
 
 router.post("/", async (req, res) => {
     const { username, password } = req.body;
@@ -55,7 +91,20 @@ router.get("/basicinfo/:id", async (req, res) => {
 
     const basicInfo = await User.findByPk(id, { attributes: { exclude: ["password", "updatedAt"] } })
 
-    res.json(basicInfo)
+    const listOfCafe = await coffeeplaces.findAll({
+        include: [
+        {
+            model: User,
+        },],
+        where: {
+            UserId: id,
+        },
+        //where name or adress have %name%
+        order: [[ 'UserId', 'DESC']],
+        //order by favourite to push all user favourite to the top
+        subQuery: false})
+
+    res.json({ listOfCafe: listOfCafe, basicInfo: basicInfo})
 })
 //get user info based on their id, exluding the password and updatedAt
 
@@ -76,3 +125,108 @@ router.put('/changepassword', validateToken, async (req, res) => {
 //Change password, compare user input password to current password in database, if they match, continue to update the password
 
 module.exports = router
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: The users managing API
+ * /auth/:
+ *   post:
+ *     summary: create account
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username
+ *       - in: path
+ *         name: password
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The password
+ *     responses:
+ *       200:
+ *         description: The users managing API
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ * /auth/login:
+ *   post:
+ *     summary: login
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username
+ *       - in: path
+ *         name: password
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The password
+ *     responses:
+ *       200:
+ *         description: The users managing API
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ * /auth/basicinfo/{id}:
+ *   get:
+ *     summary: check user info
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user's id
+ *     responses:
+ *       200:
+ *         description: The users managing API
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ * /auth/changepassword:
+ *   put:
+ *     summary: change password
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username
+ *       - in: path
+ *         name: password
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The password
+ *     responses:
+ *       200:
+ *         description: The users managing API
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ */
