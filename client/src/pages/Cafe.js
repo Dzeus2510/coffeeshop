@@ -155,11 +155,13 @@ function Cafe() {
                         return (
                             <div key={key} className="review">
                                 {review.reviewBody}
-                                <label onClick={() => { nav(`/profile/${authState.id}`) }} style={{ color: "red" }}>= {review.username}</label>
+                                <label onClick={() => { nav(`/profile/${review.UserId}`) }} style={{ color: "red" }}>= {review.username}</label>
                                 {(authState.id === review.UserId || authState.id === cafeObject.UserId) && (
                                     <button
                                         onClick={() => {
-                                            deleteReview(review.id);
+                                            if(window.confirm("Do you want to delete " + review.username + "'s comment: " + review.reviewBody)){
+                                                deleteReview(review.id);
+                                            }
                                         }}
                                     >
                                         X

@@ -62,9 +62,9 @@ function Root() {
                 </>
               ) : (
                 <>
-                  <Link to="/?page=1&searchword="> HomePage</Link>
-                  <Link to="/favourite">Favourite</Link>
-                  <Link to="/createshop">Create</Link>
+                  <Link to="/cafe/?page=1&searchword="> HomePage</Link>
+                  <Link to="/cafe/favourite">Favourite</Link>
+                  <Link to="/cafe/create">Create</Link>
                 </>
               )}
             </div>
@@ -75,14 +75,14 @@ function Root() {
             </div>
           </div>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/cafe" element={<Home />} />
             <Route path="/cafe/:id" element={<Cafe />} />
             <Route path="/registration" element={<Registration />} />
-            <Route path="/createshop" element={<CreateCoffee />} />
+            <Route path="/cafe/create" element={<CreateCoffee />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/changepassword" element={<ChangePassword />} />
-            <Route path="/favourite" element={<Favourite />} />
+            <Route path="/cafe/favourite" element={<Favourite />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
       </AuthContext.Provider>
