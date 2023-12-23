@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "doanngocvu25102003",
-    "database": "coffeeshop",
-    "host": "localhost",
+    "username": "if0_35662512",
+    "password": "6zWmZLSosNj3FU",
+    "database": "if0_35662512_XXX",
+    "host": "sql311.infinityfree.com",
     "dialect": "mysql"
   },
   "test": {
