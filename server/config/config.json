@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "doanngocvu25102003",
-    "database": "coffeeshop",
-    "host": "localhost",
+    "username": "uilqm5ftg9z0bc4d",
+    "password": "CNE0k9A4uMiPPoFMSZ0U",
+    "database": "bd4olm159rsaoakwpw48",
+    "host": "bd4olm159rsaoakwpw48-mysql.services.clever-cloud.com",
     "dialect": "mysql"
   },
   "test": {
