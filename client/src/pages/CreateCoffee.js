@@ -23,7 +23,7 @@ function CreateCoffee() {
     });
 
     const onSubmit = (data) => {
-        axios.post("http://localhost:3001/cafes/createcoffee", data, {
+        axios.post("http://localhost:3001/cafes/create", data, {
             headers: {
                 accessToken: localStorage.getItem("accessToken"),
             },

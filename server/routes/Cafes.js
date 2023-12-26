@@ -202,7 +202,7 @@ router.get('/byId/:id', validateToken, async (req, res) => {
     res.json(cafe)
 })
 
-router.post('/claimcoffee/:id', validateToken, async (req, res) => {
+router.post('/claim/:id', validateToken, async (req, res) => {
     const id = req.params.id
     const cafe = await coffeeplaces.findByPk(id)
     await cafe.update({ UserId: req.user.id })
@@ -216,7 +216,7 @@ router.post('/disclaim/:id', validateToken, async (req, res) => {
     console.log("disclaimed the coffee shop ")
 })
 
-router.post('/createcoffee', validateToken, async (req, res) => {
+router.post('/create', validateToken, async (req, res) => {
     var { name, address, category, phone, website, image } = req.body;
     console.log(category)
     console.log(req.body)

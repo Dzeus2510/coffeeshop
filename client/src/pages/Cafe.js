@@ -72,7 +72,7 @@ function Cafe() {
         event.stopPropagation();
         let claimaddress = prompt("Please Re-enter the coffee address");
         if(claimaddress === cafeObject.address) {
-            axios.post(`http://localhost:3001/cafes/claimcoffee/${id}`,{
+            axios.post(`http://localhost:3001/cafes/claim/${id}`,{
         },
         {
             headers: { accessToken: localStorage.getItem("accessToken") },
